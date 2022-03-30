@@ -1,10 +1,13 @@
-while getopts ":m:" opt; do
+while getopts ":m:c:" opt; do
   case $opt in
     m)
       echo "-m was triggered, Parameter: $OPTARG" >&2
       git add .
       git commit -m "$OPTARG"
       git push
+	;;
+     c)
+	exit
 	;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
