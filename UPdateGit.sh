@@ -1,7 +1,10 @@
-while getopts :m:f: opt; do
+while getopts :m:f:c opt; do
   case $opt in
     f)
 	git add $OPTARG
+;;
+    c)
+	exit
 ;;
     m)
 	git commit -m "$OPTARG"
