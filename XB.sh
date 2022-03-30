@@ -7,6 +7,7 @@ while getopts ":m:c:" opt; do
       git push
 	;;
      c)
+	echo "The window will be closed"
 	exit
 	;;
     \?)
