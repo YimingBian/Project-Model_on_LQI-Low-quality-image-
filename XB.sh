@@ -1,4 +1,4 @@
-while getopts ":m:c:" opt; do
+while getopts ":m:c" opt; do
   case $opt in
     m)
       echo "-m was triggered, Parameter: $OPTARG" >&2
