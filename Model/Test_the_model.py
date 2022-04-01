@@ -16,12 +16,16 @@ import copy
 from torch.utils.data import DataLoader
 from TNT import imshow
 
-BATCH_SIZE = 2
+BATCH_SIZE = 4
 EPOCH = 20
-TESTDIR = "../Dataset/data/SNP_small/test"
+#On Mac
+#TESTDIR = "../Dataset/data/SNP_small/test"
+#On Win
+TESTDIR = "D:/Academic/2022Spring/575/Project/Model/PIC_generator/data/SNP_small/test"
 
 
 data_transforms = transforms.Compose([
+        transforms.Resize((224,224)),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 testset = datasets.ImageFolder(TESTDIR,transform=data_transforms)
@@ -32,38 +36,18 @@ print(device)
 
 dataiter = iter(testloader)
 images, labels = dataiter.next()
-#print(images)
-print(labels)
 
 
 
 
-#imshow(torchvision.utils.make_grid(images))
-#print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(4)))
-
-
-
-model1 = models.resnet18(pretrained=True)
-for param in model1.parameters():
+model = models.resnet18(pretrained=True)
+for param in model.parameters():
     param.requires_grad = False
-model1.fc = nn.Linear(512,5)
+model.fc = nn.Linear(512,5)
 
-
-
-
-#PATH = "./Trained/model_ft_SNP_small.pth"
+#PATH = "./model_ft_SNP_small.pth"
 #model2 = models.resnet18()
 #for param in model2.parameters():
 #    param.requires_grad = False
 #model2.fc = nn.Linear(512,5)
 #model2.load_state_dict(torch.load(PATH))
-
-
-
-
-#dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
-
-
-
-#model1 = model1.to(device)
-#model2 = model2.to(device)

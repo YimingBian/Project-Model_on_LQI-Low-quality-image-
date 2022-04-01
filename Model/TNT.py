@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import time
 import copy
 import torch
+from torchvision import datasets, models, transforms
 
 
 def imshow(inp, title=None):
@@ -16,6 +17,7 @@ def imshow(inp, title=None):
     if title is not None:
         plt.title(title)
     plt.pause(0.001)  # pause a bit so that plots are updated
+    plt.show()
 
 
 def train_model(model, criterion, optimizer, scheduler, DATALOADER, DEVICE, DATASETSIZE, num_epochs=25):
@@ -114,3 +116,26 @@ def visualize_model(model, DATALOADER, DEVICE, CLASSNAMES, num_images=6):
                     return
         model.train(mode=was_training)
 
+def test_model(model, datadir, batchsize):
+    data_transforms = transforms.Compose([
+        transforms.Resize((224,224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+    testset = datasets.ImageFolder(datadir,transform=data_transforms)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=batchsize, shuffle=False)
+
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data
+            #print(labels)
+            outputs = model(images)
+            print(outputs)
+            _,predicted = torch.max(outputs.data,1)
+            #print(predicted)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    print(f'Accuracy of the network on {total} test images: {100 * correct // total} %')
