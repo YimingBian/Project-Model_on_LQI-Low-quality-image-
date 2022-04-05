@@ -1,3 +1,4 @@
+from imghdr import tests
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -139,3 +140,46 @@ def test_model(model, datadir, batchsize):
             correct += (predicted == labels).sum().item()
 
     print(f'Accuracy of the network on {total} test images: {100 * correct // total} %')
+
+def compare_models(model1, model2, datadir):
+    data_transforms = transforms.Compose([
+        transforms.Resize((224,224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+    testset = datasets.ImageFolder(datadir,transform=data_transforms)
+    classes = testset.classes
+    testloader = torch.utils.data.DataLoader(testset, batch_size=1, shuffle=False)
+    #for data in testloader:
+    #    images, labels = data
+    #    print(classes[labels.item()])
+    correct1 = 0
+    total = 0
+    correct2 = 0
+    model1.eval()
+    model2.eval()
+
+
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data
+            outputs1 = model1(images)
+            outputs2 = model2(images)
+            total += labels.size(0)
+            #for retrained model
+            _,predicted1 = torch.max(outputs1.data,1)
+            correct1 += (predicted1 == labels).sum().item()
+
+            # for original model
+            with open("imagenet_classes.txt", "r") as f:
+                categories = [s.strip() for s in f.readlines()]
+            
+            probabilities = torch.nn.functional.softmax(outputs2[0], dim=0)
+            _,predict_id = torch.topk(probabilities,1)
+            prediction = categories[predict_id]
+
+            if prediction == classes[labels.item()]:
+                correct2 += 1
+
+    print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 // total} %')
+    print(f'Accuracy of the original network on {total} test images: {100 * correct2 // total} %')
+    
