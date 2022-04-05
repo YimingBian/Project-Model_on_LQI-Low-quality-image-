@@ -17,9 +17,9 @@ import copy
 from torch.utils.data import DataLoader
 from TNT import test_model, compare_models
 
-BATCH_SIZE = 4
-
 TESTDIR = "D:/Academic/2022Spring/575/Project/Model/PIC_generator/data/SNP_small/test_ori"
+
+#load retrained model
 PATH = "./model_ft_SNP_small.pth"
 model1 = models.resnet18()
 for param in model1.parameters():
@@ -27,17 +27,7 @@ for param in model1.parameters():
 model1.fc = nn.Linear(512,5)
 model1.load_state_dict(torch.load(PATH))
 
+#load pretrained model
 model2 = models.resnet18(pretrained=True)
-#for param in model.parameters():
-#    param.requires_grad = False
-#model.fc = nn.Linear(512,5)
-
-#test_model(model,TESTDIR,BATCH_SIZE)
-
 
 compare_models(model1, model2, TESTDIR)
-
-#print(a[0,1])
-#for i in range(a.size(dim=1)):
-#    print(classsssss[ceil(a[0,i].item())])
-#print(a.size(1))
