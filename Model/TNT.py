@@ -198,7 +198,8 @@ def test_single_model(model1, datadir, writemode = False, filename = None):
     lvl_2_err = 0
     lvl_3_err = 0
     lvl_4_err = 0
-    
+    ori_err = 0
+
     with torch.no_grad():
         for data in testloader:
             images, labels = data
@@ -221,27 +222,30 @@ def test_single_model(model1, datadir, writemode = False, filename = None):
                     lvl_3_err += 1
                 elif '_SNP_0.2.JPEG' in wrong_filename:
                     lvl_2_err += 1
-                else:
+                elif '_SNP_0.1.JPEG' in wrong_filename:
                     lvl_1_err += 1
-                #print('Wrong prediction on the')
+                else:
+                    ori_err += 1
             count += 1
 
     if writemode == False:
         print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
+        print(f'original: {ori_err} ({100*ori_err/total}%)')
         print(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)')
         print(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)')
         print(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)')
         print(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)')
-    elif 'ori' in datadir or 'ORI' in datadir:
-        txtdir = "./Results/"+filename+'.txt'
-        F = open(txtdir,'a')
-        F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
-        F.write('==========\n')
-        F.close
+    #elif 'ori' in datadir or 'ORI' in datadir:
+    #    txtdir = "./Results/"+filename+'.txt'
+    #    F = open(txtdir,'a')
+    #    F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+    #    F.write('==========\n')
+    #    F.close
     else:
         txtdir = "./Results/"+filename+'.txt'
         F = open(txtdir,'a')
         F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+        F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
         F.write(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)\n')
         F.write(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)\n')
         F.write(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)\n')
@@ -299,29 +303,33 @@ def test_single_pretrained_model(model1, datadir, writemode = False , filename =
                     lvl_3_err += 1
                 elif '_SNP_0.2.JPEG' in wrong_filename:
                     lvl_2_err += 1
-                else:
+                elif '_SNP_0.1.JPEG' in wrong_filename:
                     lvl_1_err += 1
+                else:
+                    ori_err += 1
             count += 1
 
     if writemode == False:
         print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
+        print(f'original: {ori_err} ({100*ori_err/total}%)')
         print(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)')
-        print(f'lvl1: {lvl_2_err} ({100*lvl_2_err/total}%)')
-        print(f'lvl1: {lvl_3_err} ({100*lvl_3_err/total}%)')
-        print(f'lvl1: {lvl_4_err} ({100*lvl_4_err/total}%)')
-    elif 'ori' in datadir or 'ORI' in datadir:
-        txtdir = "./Results/"+filename+'.txt'
-        F = open(txtdir,'a')
-        F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
-        F.write('==========\n')
-        F.close
+        print(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)')
+        print(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)')
+        print(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)')
+    #elif 'ori' in datadir or 'ORI' in datadir:
+    #    txtdir = "./Results/"+filename+'.txt'
+    #    F = open(txtdir,'a')
+    #    F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+    #    F.write('==========\n')
+    #    F.close
     else:
         txtdir = "./Results/"+filename+'.txt'
         F = open(txtdir,'a')
         F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+        F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
         F.write(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)\n')
-        F.write(f'lvl1: {lvl_2_err} ({100*lvl_2_err/total}%)\n')
-        F.write(f'lvl1: {lvl_3_err} ({100*lvl_3_err/total}%)\n')
-        F.write(f'lvl1: {lvl_4_err} ({100*lvl_4_err/total}%)\n')
+        F.write(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)\n')
+        F.write(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)\n')
+        F.write(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)\n')
         F.write('==========\n')
         F.close
