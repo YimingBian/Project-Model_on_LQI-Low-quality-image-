@@ -35,8 +35,9 @@ data_transforms = {
     ]),
 }
 
-data_dir = 'data/SNP_small' #modified Yiming
-image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x])
+data_dir = './data/SNP_small/train_ori' #modified Yiming
+
+image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir+ '/', x), data_transforms[x])
                   for x in ['train', 'val']}
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=4, shuffle=True)
               for x in ['train', 'val']}
@@ -88,7 +89,10 @@ model_conv = train_model(model_conv, criterion, optimizer_conv, exp_lr_scheduler
 plt.ioff()
 plt.show()
 
-#$FILE1 = "./model_ft_SNP_small.pth"
+#FILE1 = "./model_ft_SNP_small.pth"
 #torch.save(model_ft.state_dict(), FILE1)
+FILE1 = "./model_ft_ori_small.pth"
+torch.save(model_ft.state_dict(), FILE1)
+
 #FILE2 = "./model_conv_SNP_small.pth"
 #torch.save(model_conv.state_dict(), FILE2)

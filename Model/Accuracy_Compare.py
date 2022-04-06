@@ -1,33 +1,40 @@
-from cgi import test
-from imghdr import tests
-from math import ceil
-from sklearn.utils import shuffle
+
 import torch.nn as nn
 import torch
-import torch.optim as optim
-from torch.optim import lr_scheduler
-import torch.backends.cudnn as cudnn
-import numpy as np
-import torchvision
-from torchvision import datasets, models, transforms
-import matplotlib.pyplot as plt
-import time
-import os
-import copy
-from torch.utils.data import DataLoader
-from TNT import test_model, compare_models
+from torchvision import models
+from TNT import test_single_model, test_single_pretrained_model
 
-TESTDIR = "D:/Academic/2022Spring/575/Project/Model/PIC_generator/data/SNP_small/test_ori"
+TESTDIRS = ["D:/Academic/2022Spring/575/Project/Model/PIC_generator/data/SNP_small/test_ori",
+           "D:/Academic/2022Spring/575/Project/Model/PIC_generator/data/ORI",
+           "D:/Academic/2022Spring/575/Project/Model/PIC_generator/data/SNP_small/test",
+           "D:/Academic/2022Spring/575/Project/Model/PIC_generator/data/SNP_small/val",
+           "D:/Academic/2022Spring/575/Project/Model/PIC_generator/data/SNP/train",
+           "D:/Academic/2022Spring/575/Project/Model/PIC_generator/data/SNP/val"   
+] 
 
-#load retrained model
-PATH = "./model_ft_SNP_small.pth"
+PATH1 = "./model_ft_ori_small.pth"
+MODEL_NAME1 = 'TL_model'
+
+PATH2 = "./model_ft_SNP_small.pth"
+MODEL_NAME2 = 'Retrained_model'
+
+MODEL_NAME3 = 'Pre-trained_model'
+
 model1 = models.resnet18()
 for param in model1.parameters():
     param.requires_grad = False
 model1.fc = nn.Linear(512,5)
-model1.load_state_dict(torch.load(PATH))
+model1.load_state_dict(torch.load(PATH1))
 
-#load pretrained model
-model2 = models.resnet18(pretrained=True)
+model2 = models.resnet18()
+for param in model2.parameters():
+    param.requires_grad = False
+model2.fc = nn.Linear(512,5)
+model2.load_state_dict(torch.load(PATH2))
 
-compare_models(model1, model2, TESTDIR)
+model3 = models.resnet18(pretrained=True)
+
+for TESTDIR in TESTDIRS:
+    test_single_model(model1, TESTDIR, True, MODEL_NAME1)
+    test_single_model(model2, TESTDIR, True, MODEL_NAME2)
+    test_single_pretrained_model(model3, TESTDIR, True, MODEL_NAME3)

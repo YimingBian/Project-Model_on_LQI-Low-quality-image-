@@ -1,0 +1,34 @@
+
+Accuracy of the retrained network on 120 test images: 97.5 %
+==========
+
+Accuracy of the retrained network on 6422 test images: 95.26627218934911 %
+==========
+
+Accuracy of the retrained network on 298 test images: 74.83221476510067 %
+lvl1: 22 (7.382550335570469%)
+lvl2: 15 (5.033557046979865%)
+lvl3: 16 (5.369127516778524%)
+lvl4: 22 (7.382550335570469%)
+==========
+
+Accuracy of the retrained network on 250 test images: 74.4 %
+lvl1: 18 (7.2%)
+lvl2: 19 (7.6%)
+lvl3: 14 (5.6%)
+lvl4: 13 (5.2%)
+==========
+
+Accuracy of the retrained network on 17122 test images: 76.18852937740918 %
+lvl1: 1004 (5.863800957832029%)
+lvl2: 1004 (5.863800957832029%)
+lvl3: 1069 (6.243429505898844%)
+lvl4: 1000 (5.840439201027917%)
+==========
+
+Accuracy of the retrained network on 8566 test images: 76.8269904272706 %
+lvl1: 475 (5.545178613121644%)
+lvl2: 500 (5.837030119075415%)
+lvl3: 497 (5.802007938360962%)
+lvl4: 513 (5.988792902171375%)
+==========

@@ -1,11 +1,9 @@
-from imghdr import tests
 import numpy as np
 import matplotlib.pyplot as plt
 import time
 import copy
 import torch
-from torchvision import datasets, models, transforms
-
+from torchvision import datasets, transforms
 
 def imshow(inp, title=None):
     """Imshow for Tensor."""
@@ -127,9 +125,10 @@ def test_model(model, datadir, batchsize):
 
     correct = 0
     total = 0
-
+    count = 0
     with torch.no_grad():
         for data in testloader:
+            count += 1
             images, labels = data
             #print(labels)
             outputs = model(images)
@@ -138,6 +137,7 @@ def test_model(model, datadir, batchsize):
             #print(predicted)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+            
 
     print(f'Accuracy of the network on {total} test images: {100 * correct // total} %')
 
@@ -149,16 +149,12 @@ def compare_models(model1, model2, datadir):
     testset = datasets.ImageFolder(datadir,transform=data_transforms)
     classes = testset.classes
     testloader = torch.utils.data.DataLoader(testset, batch_size=1, shuffle=False)
-    #for data in testloader:
-    #    images, labels = data
-    #    print(classes[labels.item()])
+
     correct1 = 0
     total = 0
     correct2 = 0
     model1.eval()
     model2.eval()
-
-
     with torch.no_grad():
         for data in testloader:
             images, labels = data
@@ -182,4 +178,150 @@ def compare_models(model1, model2, datadir):
 
     print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 // total} %')
     print(f'Accuracy of the original network on {total} test images: {100 * correct2 // total} %')
+
+def test_single_model(model1, datadir, writemode = False, filename = None):
+    data_transforms = transforms.Compose([
+        transforms.Resize((224,224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+    testset = datasets.ImageFolder(datadir,transform=data_transforms)
+    classes = testset.classes
+    testloader = torch.utils.data.DataLoader(testset, batch_size=1, shuffle=True)
+    correct1 = 0
+    total = 0
+    model1.eval()
+
+    model1=model1.to('cuda')
     
+    count = 0
+    lvl_1_err = 0
+    lvl_2_err = 0
+    lvl_3_err = 0
+    lvl_4_err = 0
+    
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data
+            total += labels.size(0)
+        
+            images = images.to('cuda')
+        
+            outputs1 = model1(images)
+            #for retrained model
+            _,predicted1 = torch.max(outputs1.data,1)
+            
+            predicted1=predicted1.to('cpu')
+            
+            correct1 += (predicted1 == labels).sum().item()
+            if predicted1 != labels:
+                wrong_filename = str(testloader.dataset.imgs[count][0]).split('\\')[-1]
+                if '_SNP_0.4.JPEG' in wrong_filename:
+                    lvl_4_err += 1
+                elif '_SNP_0.3.JPEG' in wrong_filename:
+                    lvl_3_err += 1
+                elif '_SNP_0.2.JPEG' in wrong_filename:
+                    lvl_2_err += 1
+                else:
+                    lvl_1_err += 1
+                #print('Wrong prediction on the')
+            count += 1
+
+    if writemode == False:
+        print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
+        print(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)')
+        print(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)')
+        print(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)')
+        print(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)')
+    elif 'ori' in datadir or 'ORI' in datadir:
+        txtdir = "./Results/"+filename+'.txt'
+        F = open(txtdir,'a')
+        F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+        F.write('==========\n')
+        F.close
+    else:
+        txtdir = "./Results/"+filename+'.txt'
+        F = open(txtdir,'a')
+        F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+        F.write(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)\n')
+        F.write(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)\n')
+        F.write(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)\n')
+        F.write(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)\n')
+        F.write('==========\n')
+        F.close
+
+
+def test_single_pretrained_model(model1, datadir, writemode = False , filename = None):
+    data_transforms = transforms.Compose([
+        transforms.Resize((224,224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+    testset = datasets.ImageFolder(datadir,transform=data_transforms)
+    classes = testset.classes
+    testloader = torch.utils.data.DataLoader(testset, batch_size=1, shuffle=True)
+    correct1 = 0
+    total = 0
+    model1.eval()
+
+    model1=model1.to('cuda')
+    
+    count = 0
+    lvl_1_err = 0
+    lvl_2_err = 0
+    lvl_3_err = 0
+    lvl_4_err = 0
+    
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data
+
+            images=images.to('cuda')
+
+            outputs1 = model1(images)
+            total += labels.size(0)
+
+            with open("imagenet_classes.txt", "r") as f:
+                categories = [s.strip() for s in f.readlines()]
+            
+            probabilities = torch.nn.functional.softmax(outputs1[0], dim=0)
+            _,predict_id = torch.topk(probabilities,1)
+            
+            predict_id=predict_id.to('cpu')
+            
+            prediction = categories[predict_id]
+
+            if prediction == classes[labels.item()]:
+                correct1 += 1
+            else:
+                wrong_filename = str(testloader.dataset.imgs[count][0]).split('\\')[-1]
+                if '_SNP_0.4.JPEG' in wrong_filename:
+                    lvl_4_err += 1
+                elif '_SNP_0.3.JPEG' in wrong_filename:
+                    lvl_3_err += 1
+                elif '_SNP_0.2.JPEG' in wrong_filename:
+                    lvl_2_err += 1
+                else:
+                    lvl_1_err += 1
+            count += 1
+
+    if writemode == False:
+        print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
+        print(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)')
+        print(f'lvl1: {lvl_2_err} ({100*lvl_2_err/total}%)')
+        print(f'lvl1: {lvl_3_err} ({100*lvl_3_err/total}%)')
+        print(f'lvl1: {lvl_4_err} ({100*lvl_4_err/total}%)')
+    elif 'ori' in datadir or 'ORI' in datadir:
+        txtdir = "./Results/"+filename+'.txt'
+        F = open(txtdir,'a')
+        F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+        F.write('==========\n')
+        F.close
+    else:
+        txtdir = "./Results/"+filename+'.txt'
+        F = open(txtdir,'a')
+        F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+        F.write(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)\n')
+        F.write(f'lvl1: {lvl_2_err} ({100*lvl_2_err/total}%)\n')
+        F.write(f'lvl1: {lvl_3_err} ({100*lvl_3_err/total}%)\n')
+        F.write(f'lvl1: {lvl_4_err} ({100*lvl_4_err/total}%)\n')
+        F.write('==========\n')
+        F.close
