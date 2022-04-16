@@ -1,0 +1,28 @@
+Conferences
+1) ICMLANT 2022
+	ddl: Aug 31
+	website:https://icmlant.com
+
+2) IPAS 2022
+	ddl: May 20
+	website: https://ipas.ieee.tn
+
+
+Journels
+(From https://www.scimagojr.com/journalrank.php?category=1707&type=j)
+Q1
+1) IEEE Transactions on Pattern Analysis and Machine Intelligence
+	website: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=34
+
+2) International Journal of Computer Vision
+	website: https://www.springer.com/journal/11263
+
+3) Pattern Recognition
+	website: https://www.sciencedirect.com/journal/pattern-recognition
+
+4) IEEE Transactions on Visualization and Computer Graphics
+	website: https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=2945
+
+5) Computer Vision and Image Understanding
+	website: https://www.sciencedirect.com/journal/computer-vision-and-image-understanding
+
