@@ -179,7 +179,7 @@ def compare_models(model1, model2, datadir):
     print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 // total} %')
     print(f'Accuracy of the original network on {total} test images: {100 * correct2 // total} %')
 
-def test_single_model(model1, datadir, writemode = False, filename = None):
+def test_single_model(model1, datadir, noisetype = 'SNP', pie = False, writemode = False, filename = None):
     data_transforms = transforms.Compose([
         transforms.Resize((224,224)),
         transforms.ToTensor(),
@@ -192,66 +192,205 @@ def test_single_model(model1, datadir, writemode = False, filename = None):
     model1.eval()
 
     model1=model1.to('cuda')
-    
-    count = 0
-    lvl_1_err = 0
-    lvl_2_err = 0
-    lvl_3_err = 0
-    lvl_4_err = 0
-    ori_err = 0
+    if noisetype == 'SNP':
+        # noise type is set default as salt and pepper
+        count = 0
+        lvl_1_err = 0
+        lvl_2_err = 0
+        lvl_3_err = 0
+        lvl_4_err = 0
+        ori_err = 0
 
-    with torch.no_grad():
-        for data in testloader:
-            images, labels = data
-            total += labels.size(0)
-        
-            images = images.to('cuda')
-        
-            outputs1 = model1(images)
-            #for retrained model
-            _,predicted1 = torch.max(outputs1.data,1)
-            
-            predicted1=predicted1.to('cpu')
-            
-            correct1 += (predicted1 == labels).sum().item()
-            if predicted1 != labels:
-                wrong_filename = str(testloader.dataset.imgs[count][0]).split('\\')[-1]
-                if '_SNP_0.4.JPEG' in wrong_filename:
-                    lvl_4_err += 1
-                elif '_SNP_0.3.JPEG' in wrong_filename:
-                    lvl_3_err += 1
-                elif '_SNP_0.2.JPEG' in wrong_filename:
-                    lvl_2_err += 1
-                elif '_SNP_0.1.JPEG' in wrong_filename:
-                    lvl_1_err += 1
-                else:
-                    ori_err += 1
-            count += 1
+        with torch.no_grad():
+            for data in testloader:
+                images, labels = data
+                total += labels.size(0)
 
-    if writemode == False:
-        print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
-        print(f'original: {ori_err} ({100*ori_err/total}%)')
-        print(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)')
-        print(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)')
-        print(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)')
-        print(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)')
-    #elif 'ori' in datadir or 'ORI' in datadir:
-    #    txtdir = "./Results/"+filename+'.txt'
-    #    F = open(txtdir,'a')
-    #    F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
-    #    F.write('==========\n')
-    #    F.close
-    else:
-        txtdir = "./Results/"+filename+'.txt'
-        F = open(txtdir,'a')
-        F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
-        F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
-        F.write(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)\n')
-        F.write(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)\n')
-        F.write(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)\n')
-        F.write(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)\n')
-        F.write('==========\n')
-        F.close
+                images = images.to('cuda')
+
+                outputs1 = model1(images)
+                #for retrained model
+                _,predicted1 = torch.max(outputs1.data,1)
+
+                predicted1=predicted1.to('cpu')
+
+                correct1 += (predicted1 == labels).sum().item()
+                if predicted1 != labels:
+                    wrong_filename = str(testloader.dataset.imgs[count][0]).split('\\')[-1]
+                    if '_SNP_0.4.JPEG' in wrong_filename:
+                        lvl_4_err += 1
+                    elif '_SNP_0.3.JPEG' in wrong_filename:
+                        lvl_3_err += 1
+                    elif '_SNP_0.2.JPEG' in wrong_filename:
+                        lvl_2_err += 1
+                    elif '_SNP_0.1.JPEG' in wrong_filename:
+                        lvl_1_err += 1
+                    else:
+                        ori_err += 1
+                count += 1
+
+        if writemode == False:
+            print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
+            print(f'original: {ori_err} ({100*ori_err/total}%)')
+            print(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)')
+            print(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)')
+            print(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)')
+            print(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)')
+        #elif 'ori' in datadir or 'ORI' in datadir:
+        #    txtdir = "./Results/"+filename+'.txt'
+        #    F = open(txtdir,'a')
+        #    F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+        #    F.write('==========\n')
+        #    F.close
+        else:
+            txtdir = "./Results/"+filename+'.txt'
+            F = open(txtdir,'a')
+            F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+            F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
+            F.write(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)\n')
+            F.write(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)\n')
+            F.write(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)\n')
+            F.write(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)\n')
+            F.write('==========\n')
+            F.close
+
+    elif noisetype == 'Gaussian':
+        count = 0
+        m2v2_err = 0
+        m2v3_err = 0
+        m2v4_err = 0
+        m2v5_err = 0
+        m3v2_err = 0
+        m3v3_err = 0
+        m3v4_err = 0
+        m3v5_err = 0
+        m4v2_err = 0
+        m4v3_err = 0
+        m4v4_err = 0
+        m4v5_err = 0
+        m5v2_err = 0
+        m5v3_err = 0
+        m5v4_err = 0
+        m5v5_err = 0
+        
+        ori_err = 0
+
+        with torch.no_grad():
+            for data in testloader:
+                images, labels = data
+                total += labels.size(0)
+
+                images = images.to('cuda')
+
+                outputs1 = model1(images)
+                #for retrained model
+                _,predicted1 = torch.max(outputs1.data,1)
+
+                predicted1=predicted1.to('cpu')
+
+                correct1 += (predicted1 == labels).sum().item()
+                if predicted1 != labels:
+                    wrong_filename = str(testloader.dataset.imgs[count][0]).split('\\')[-1]
+                    if '_GS_m_0.2_v_0.2.JPEG' in wrong_filename:
+                        m2v2_err += 1
+                    elif '_GS_m_0.2_v_0.3.JPEG' in wrong_filename:
+                        m2v3_err += 1
+                    elif '_GS_m_0.2_v_0.4.JPEG' in wrong_filename:
+                        m2v4_err += 1
+                    elif '_GS_m_0.2_v_0.5.JPEG' in wrong_filename:
+                        m2v5_err += 1
+                    
+                    elif '_GS_m_0.3_v_0.2.JPEG' in wrong_filename:
+                        m3v2_err += 1
+                    elif '_GS_m_0.3_v_0.3.JPEG' in wrong_filename:
+                        m3v3_err += 1
+                    elif '_GS_m_0.3_v_0.4.JPEG' in wrong_filename:
+                        m3v4_err += 1
+                    elif '_GS_m_0.3_v_0.5.JPEG' in wrong_filename:
+                        m3v5_err += 1
+                    
+                    elif '_GS_m_0.4_v_0.2.JPEG' in wrong_filename:
+                        m4v2_err += 1
+                    elif '_GS_m_0.4_v_0.3.JPEG' in wrong_filename:
+                        m4v3_err += 1
+                    elif '_GS_m_0.4_v_0.4.JPEG' in wrong_filename:
+                        m4v4_err += 1
+                    elif '_GS_m_0.4_v_0.5.JPEG' in wrong_filename:
+                        m4v5_err += 1
+                    
+                    elif '_GS_m_0.5_v_0.2.JPEG' in wrong_filename:
+                        m5v2_err += 1
+                    elif '_GS_m_0.5_v_0.3.JPEG' in wrong_filename:
+                        m5v3_err += 1
+                    elif '_GS_m_0.5_v_0.4.JPEG' in wrong_filename:
+                        m5v4_err += 1
+                    elif '_GS_m_0.5_v_0.5.JPEG' in wrong_filename:
+                        m5v5_err += 1
+                    
+                    else:
+                        ori_err += 1
+                count += 1
+
+        if writemode == False:
+            print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
+            print(f'original: {ori_err} ({100*ori_err/total}%)')
+            print(f'm_0.2_v_0.2: {m2v2_err} ({100*m2v2_err/total}%)')
+            print(f'm_0.2_v_0.3: {m2v3_err} ({100*m2v3_err/total}%)')
+            print(f'm_0.2_v_0.4: {m2v4_err} ({100*m2v4_err/total}%)')
+            print(f'm_0.2_v_0.5: {m2v5_err} ({100*m2v5_err/total}%)')
+            
+            print(f'm_0.3_v_0.2: {m3v2_err} ({100*m3v2_err/total}%)')
+            print(f'm_0.3_v_0.3: {m3v3_err} ({100*m3v3_err/total}%)')
+            print(f'm_0.3_v_0.4: {m3v4_err} ({100*m3v4_err/total}%)')
+            print(f'm_0.3_v_0.5: {m3v5_err} ({100*m3v5_err/total}%)')
+            
+            print(f'm_0.4_v_0.2: {m4v2_err} ({100*m4v2_err/total}%)')
+            print(f'm_0.4_v_0.3: {m4v3_err} ({100*m4v3_err/total}%)')
+            print(f'm_0.4_v_0.4: {m4v4_err} ({100*m4v4_err/total}%)')
+            print(f'm_0.4_v_0.5: {m4v5_err} ({100*m4v5_err/total}%)')
+            
+            print(f'm_0.5_v_0.2: {m5v2_err} ({100*m5v2_err/total}%)')
+            print(f'm_0.5_v_0.3: {m5v3_err} ({100*m5v3_err/total}%)')
+            print(f'm_0.5_v_0.4: {m5v4_err} ({100*m5v4_err/total}%)')
+            print(f'm_0.5_v_0.5: {m5v5_err} ({100*m5v5_err/total}%)')
+            
+            
+        #elif 'ori' in datadir or 'ORI' in datadir:
+        #    txtdir = "./Results/"+filename+'.txt'
+        #    F = open(txtdir,'a')
+        #    F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+        #    F.write('==========\n')
+        #    F.close
+        else:
+            txtdir = "./Results/"+filename+'.txt'
+            F = open(txtdir,'a')
+            F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+            F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
+
+            F.write(f'm_0.2_v_0.2: {m2v2_err} ({100*m2v2_err/total}%)')
+            F.write(f'm_0.2_v_0.3: {m2v3_err} ({100*m2v3_err/total}%)')
+            F.write(f'm_0.2_v_0.4: {m2v4_err} ({100*m2v4_err/total}%)')
+            F.write(f'm_0.2_v_0.5: {m2v5_err} ({100*m2v5_err/total}%)')
+            
+            F.write(f'm_0.3_v_0.2: {m3v2_err} ({100*m3v2_err/total}%)')
+            F.write(f'm_0.3_v_0.3: {m3v3_err} ({100*m3v3_err/total}%)')
+            F.write(f'm_0.3_v_0.4: {m3v4_err} ({100*m3v4_err/total}%)')
+            F.write(f'm_0.3_v_0.5: {m3v5_err} ({100*m3v5_err/total}%)')
+            
+            F.write(f'm_0.4_v_0.2: {m4v2_err} ({100*m4v2_err/total}%)')
+            F.write(f'm_0.4_v_0.3: {m4v3_err} ({100*m4v3_err/total}%)')
+            F.write(f'm_0.4_v_0.4: {m4v4_err} ({100*m4v4_err/total}%)')
+            F.write(f'm_0.4_v_0.5: {m4v5_err} ({100*m4v5_err/total}%)')
+            
+            F.write(f'm_0.5_v_0.2: {m5v2_err} ({100*m5v2_err/total}%)')
+            F.write(f'm_0.5_v_0.3: {m5v3_err} ({100*m5v3_err/total}%)')
+            F.write(f'm_0.5_v_0.4: {m5v4_err} ({100*m5v4_err/total}%)')
+            F.write(f'm_0.5_v_0.5: {m5v5_err} ({100*m5v5_err/total}%)')
+
+            F.write('==========\n')
+            F.close
+
+
 
 
 def test_single_pretrained_model(model1, datadir, writemode = False , filename = None):
