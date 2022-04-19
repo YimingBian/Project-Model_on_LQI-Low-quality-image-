@@ -32,20 +32,19 @@ def Create_train_val_data(src_mother_dir, src_folder, dest_mother_dir, dest_fold
             else:
                 shutil.copy(full_name, dest_val_dir)     
 
-def Create_test_data(src_mother_dir, src_folder, dest_mother_dir, dest_folder, set_name , num_per_cate, WindowsOS = False):
+def Create_test_data(src_mother_dir, src_folder, dest_mother_dir, dest_folder, set_name , num_per_cate, mode = "test", WindowsOS = False):
     for i in range(len(src_folder)):
         src = os.path.join(src_mother_dir,src_folder[i],set_name)
         src_files = os.listdir(src)
-        dest_test_dir = os.path.join(dest_mother_dir,set_name,"test",dest_folder[i])
+        dest_test_dir = os.path.join(dest_mother_dir,set_name,mode,dest_folder[i])
 
         if WindowsOS:
             src = src.replace('/','\\')
-            dest_train_dir = dest_train_dir.replace('/','\\')
-            dest_val_dir = dest_val_dir.replace('/','\\')
+            dest_test_dir = dest_test_dir.replace('/','\\')
 
         if not os.path.exists(dest_test_dir):
             os.makedirs(dest_test_dir)
-            print(f'folder created: {os.path.join("test",dest_folder[i])} \n')
+            print(f'folder created: {os.path.join(mode,dest_folder[i])} \n')
 
         rand_idx = random.sample(range(0, len(src_files)), num_per_cate)
 
@@ -54,17 +53,16 @@ def Create_test_data(src_mother_dir, src_folder, dest_mother_dir, dest_folder, s
             shutil.copy(full_name, dest_test_dir)
 
 
-
-source_folders = ["n01531178(goldfinch)","n02342885(hamster)","n03400231(frying pan)","n03950228(pitcher)","n04515003(upright)"]
 src_mother_dir = "D:/Academic/2022Spring/575/Project/Model/PIC_generator"
+source_folders = ["n01531178(goldfinch)","n02342885(hamster)","n03400231(frying pan)","n03950228(pitcher)","n04515003(upright)"]
 
 dest_mother_dir = "D:/Academic/2022Spring/575/Project/Model/PIC_generator/data"
 dest_folders = ["goldfinch","hamster","frying pan","pitcher","upright"]
 
 total_num = 300
 
-Create_train_val_data(  src_mother_dir=src_mother_dir, src_folder=source_folders, dest_mother_dir=dest_mother_dir,
-                        dest_folder=dest_folders, set_name="GS", total_num=total_num, WindowsOS=True)
+#Create_train_val_data(  src_mother_dir=src_mother_dir, src_folder=source_folders, dest_mother_dir=dest_mother_dir,
+#                        dest_folder=dest_folders, set_name="GS", total_num=total_num, WindowsOS=True)
 
 Create_test_data(   src_mother_dir=src_mother_dir, src_folder=source_folders, dest_mother_dir=dest_mother_dir,
-                    dest_folder=dest_folders, set_name="GS", num_per_cate=200, WindowsOS=False)
+                    dest_folder=dest_folders, set_name="GS", num_per_cate=20, mode="test_small", WindowsOS=True)

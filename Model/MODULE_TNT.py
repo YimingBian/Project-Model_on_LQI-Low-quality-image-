@@ -4,6 +4,7 @@ import time
 import copy
 import torch
 from torchvision import datasets, transforms
+from MODULE_MEAN_STD import Mean_and_std_of_dataset
 
 def imshow(inp, title=None):
     """Imshow for Tensor."""
@@ -179,16 +180,19 @@ def compare_models(model1, model2, datadir):
     print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 // total} %')
     print(f'Accuracy of the original network on {total} test images: {100 * correct2 // total} %')
 
-def test_single_model(model1, datadir, noisetype = 'SNP', pie = False, writemode = False, filename = None):
+def test_single_model(model1, datadir, noisetype = 'SNP', writemode = False, filename = None):
+    ds_mean, ds_std = Mean_and_std_of_dataset(datadir, 1)
     data_transforms = transforms.Compose([
         transforms.Resize((224,224)),
         transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+        transforms.Normalize(ds_mean, ds_std)])
     testset = datasets.ImageFolder(datadir,transform=data_transforms)
     classes = testset.classes
     testloader = torch.utils.data.DataLoader(testset, batch_size=1, shuffle=True)
     correct1 = 0
     total = 0
+    err_dist = list()
+    label_dic = list()
     model1.eval()
 
     model1=model1.to('cuda')
@@ -229,21 +233,16 @@ def test_single_model(model1, datadir, noisetype = 'SNP', pie = False, writemode
                         ori_err += 1
                 count += 1
 
-        if writemode == False:
+        if writemode == False:  # print on screen
             print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
             print(f'original: {ori_err} ({100*ori_err/total}%)')
             print(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)')
             print(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)')
             print(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)')
             print(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)')
-        #elif 'ori' in datadir or 'ORI' in datadir:
-        #    txtdir = "./Results/"+filename+'.txt'
-        #    F = open(txtdir,'a')
-        #    F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
-        #    F.write('==========\n')
-        #    F.close
-        else:
+        else:                   # save in file
             txtdir = "./Results/"+filename+'.txt'
+            print(f'The result is stored at {txtdir}\n')
             F = open(txtdir,'a')
             F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
             F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
@@ -253,8 +252,22 @@ def test_single_model(model1, datadir, noisetype = 'SNP', pie = False, writemode
             F.write(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)\n')
             F.write('==========\n')
             F.close
-
-    elif noisetype == 'Gaussian':
+        # for analysis
+        err_dist.append(correct1)        
+        err_dist.append(ori_err)        
+        err_dist.append(lvl_1_err)
+        err_dist.append(lvl_2_err)
+        err_dist.append(lvl_3_err)
+        err_dist.append(lvl_4_err)
+        label_dic.append("Correct")
+        label_dic.append("ori_err")
+        label_dic.append("lvl_1_err")
+        label_dic.append("lvl_2_err")
+        label_dic.append("lvl_3_err")
+        label_dic.append("lvl_4_err")
+        return err_dist, label_dic
+    
+    elif noisetype == 'GS':
         count = 0
         m2v2_err = 0
         m2v3_err = 0
@@ -331,7 +344,7 @@ def test_single_model(model1, datadir, noisetype = 'SNP', pie = False, writemode
                         ori_err += 1
                 count += 1
 
-        if writemode == False:
+        if writemode == False:  # print on screen
             print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
             print(f'original: {ori_err} ({100*ori_err/total}%)')
             print(f'm_0.2_v_0.2: {m2v2_err} ({100*m2v2_err/total}%)')
@@ -354,42 +367,84 @@ def test_single_model(model1, datadir, noisetype = 'SNP', pie = False, writemode
             print(f'm_0.5_v_0.4: {m5v4_err} ({100*m5v4_err/total}%)')
             print(f'm_0.5_v_0.5: {m5v5_err} ({100*m5v5_err/total}%)')
             
-            
-        #elif 'ori' in datadir or 'ORI' in datadir:
-        #    txtdir = "./Results/"+filename+'.txt'
-        #    F = open(txtdir,'a')
-        #    F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
-        #    F.write('==========\n')
-        #    F.close
-        else:
+        else:                   # save in file
             txtdir = "./Results/"+filename+'.txt'
+            print(f'The result is stored at {txtdir}\n')
             F = open(txtdir,'a')
             F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
             F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
 
-            F.write(f'm_0.2_v_0.2: {m2v2_err} ({100*m2v2_err/total}%)')
-            F.write(f'm_0.2_v_0.3: {m2v3_err} ({100*m2v3_err/total}%)')
-            F.write(f'm_0.2_v_0.4: {m2v4_err} ({100*m2v4_err/total}%)')
-            F.write(f'm_0.2_v_0.5: {m2v5_err} ({100*m2v5_err/total}%)')
+            F.write(f'm_0.2_v_0.2: {m2v2_err} ({100*m2v2_err/total}%)\n')
+            F.write(f'm_0.2_v_0.3: {m2v3_err} ({100*m2v3_err/total}%)\n')
+            F.write(f'm_0.2_v_0.4: {m2v4_err} ({100*m2v4_err/total}%)\n')
+            F.write(f'm_0.2_v_0.5: {m2v5_err} ({100*m2v5_err/total}%)\n')
             
-            F.write(f'm_0.3_v_0.2: {m3v2_err} ({100*m3v2_err/total}%)')
-            F.write(f'm_0.3_v_0.3: {m3v3_err} ({100*m3v3_err/total}%)')
-            F.write(f'm_0.3_v_0.4: {m3v4_err} ({100*m3v4_err/total}%)')
-            F.write(f'm_0.3_v_0.5: {m3v5_err} ({100*m3v5_err/total}%)')
+            F.write(f'm_0.3_v_0.2: {m3v2_err} ({100*m3v2_err/total}%)\n')
+            F.write(f'm_0.3_v_0.3: {m3v3_err} ({100*m3v3_err/total}%)\n')
+            F.write(f'm_0.3_v_0.4: {m3v4_err} ({100*m3v4_err/total}%)\n')
+            F.write(f'm_0.3_v_0.5: {m3v5_err} ({100*m3v5_err/total}%)\n')
             
-            F.write(f'm_0.4_v_0.2: {m4v2_err} ({100*m4v2_err/total}%)')
-            F.write(f'm_0.4_v_0.3: {m4v3_err} ({100*m4v3_err/total}%)')
-            F.write(f'm_0.4_v_0.4: {m4v4_err} ({100*m4v4_err/total}%)')
-            F.write(f'm_0.4_v_0.5: {m4v5_err} ({100*m4v5_err/total}%)')
+            F.write(f'm_0.4_v_0.2: {m4v2_err} ({100*m4v2_err/total}%)\n')
+            F.write(f'm_0.4_v_0.3: {m4v3_err} ({100*m4v3_err/total}%)\n')
+            F.write(f'm_0.4_v_0.4: {m4v4_err} ({100*m4v4_err/total}%)\n')
+            F.write(f'm_0.4_v_0.5: {m4v5_err} ({100*m4v5_err/total}%)\n')
             
-            F.write(f'm_0.5_v_0.2: {m5v2_err} ({100*m5v2_err/total}%)')
-            F.write(f'm_0.5_v_0.3: {m5v3_err} ({100*m5v3_err/total}%)')
-            F.write(f'm_0.5_v_0.4: {m5v4_err} ({100*m5v4_err/total}%)')
-            F.write(f'm_0.5_v_0.5: {m5v5_err} ({100*m5v5_err/total}%)')
+            F.write(f'm_0.5_v_0.2: {m5v2_err} ({100*m5v2_err/total}%)\n')
+            F.write(f'm_0.5_v_0.3: {m5v3_err} ({100*m5v3_err/total}%)\n')
+            F.write(f'm_0.5_v_0.4: {m5v4_err} ({100*m5v4_err/total}%)\n')
+            F.write(f'm_0.5_v_0.5: {m5v5_err} ({100*m5v5_err/total}%)\n')
 
             F.write('==========\n')
             F.close
 
+        err_dist.append(correct1)        
+        err_dist.append(ori_err)    
+        err_dist.append(m2v2_err)
+        err_dist.append(m2v3_err)
+        err_dist.append(m2v4_err)
+        err_dist.append(m2v5_err)
+
+        err_dist.append(m3v2_err)
+        err_dist.append(m3v3_err)
+        err_dist.append(m3v4_err)
+        err_dist.append(m3v5_err)
+
+        err_dist.append(m4v2_err)
+        err_dist.append(m4v3_err)
+        err_dist.append(m4v4_err)
+        err_dist.append(m4v5_err)
+
+        err_dist.append(m5v2_err)
+        err_dist.append(m5v3_err)
+        err_dist.append(m5v4_err)
+        err_dist.append(m5v5_err)
+
+        label_dic.append("Correct")
+        label_dic.append("ori_err")
+        label_dic.append("m2v2_err")
+        label_dic.append("m2v3_err")
+        label_dic.append("m2v4_err")
+        label_dic.append("m2v5_err")
+
+        label_dic.append("m3v2_err")
+        label_dic.append("m3v3_err")
+        label_dic.append("m3v4_err")
+        label_dic.append("m3v5_err")
+
+        label_dic.append("m4v2_err")
+        label_dic.append("m4v3_err")
+        label_dic.append("m4v4_err")
+        label_dic.append("m4v5_err")
+
+        label_dic.append("m5v2_err")
+        label_dic.append("m5v3_err")
+        label_dic.append("m5v4_err")
+        label_dic.append("m5v5_err")
+
+        return err_dist, label_dic
+        
+        
+        
 
 
 
