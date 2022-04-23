@@ -4,7 +4,6 @@ import torch
 from MODULE_TNT import test_single_model, test_single_pretrained_model
 from MODULE_Pie_graph import Draw_pie_graphs
 
-
 def Modify_last_fc_layer(NETOWKRNAME, ODIM):
     model_tmp = torch.hub.load('pytorch/vision:v0.10.0',NETOWKRNAME,pretrained = True)
     for params in model_tmp.parameters():

@@ -20,18 +20,18 @@ def imshow(inp, title=None):
     plt.show()
 
 
-def train_model(model, criterion, optimizer, scheduler, DATALOADER, DEVICE, DATASETSIZE, num_epochs=25):
+def train_model(model, criterion, optimizer, scheduler, DATALOADER, DEVICE, DATASETSIZE, store_path, num_epochs=25):
+    f = open(f'{store_path}/Training_Epoch.txt')
     since = time.time()
-
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
-    dataloaders = DATALOADER
-    device = DEVICE 
     dataset_sizes = DATASETSIZE
     for epoch in range(num_epochs):
         print(f'Epoch {epoch}/{num_epochs - 1}')
         print('-' * 10)
-
+        f.write(f'Epoch {epoch}/{num_epochs - 1}\n')
+        f.write('----------\n')
+        
         for phase in ['train', 'val']:
             if phase == 'train':
                 model.train()  
@@ -41,9 +41,9 @@ def train_model(model, criterion, optimizer, scheduler, DATALOADER, DEVICE, DATA
             running_loss = 0.0
             running_corrects = 0
 
-            for inputs, labels in dataloaders[phase]:
-                inputs = inputs.to(device)
-                labels = labels.to(device)
+            for inputs, labels in DATALOADER[phase]:
+                inputs = inputs.to(DEVICE)
+                labels = labels.to(DEVICE)
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
@@ -70,17 +70,20 @@ def train_model(model, criterion, optimizer, scheduler, DATALOADER, DEVICE, DATA
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
             print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
+            f.write(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}\n')
+            
 
             # deep copy the model
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
 
-        print()
-
     time_elapsed = time.time() - since
     print(f'Training complete in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s')
     print(f'Best val Acc: {best_acc:4f}')
+    f.write(f'Training complete in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s\n')
+    f.write(f'Best val Acc: {best_acc:4f}\n')
+    
 
     # load best model weights
     model.load_state_dict(best_model_wts)
@@ -142,43 +145,6 @@ def test_model(model, datadir, batchsize):
 
     print(f'Accuracy of the network on {total} test images: {100 * correct // total} %')
 
-def compare_models(model1, model2, datadir):
-    data_transforms = transforms.Compose([
-        transforms.Resize((224,224)),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
-    testset = datasets.ImageFolder(datadir,transform=data_transforms)
-    classes = testset.classes
-    testloader = torch.utils.data.DataLoader(testset, batch_size=1, shuffle=False)
-
-    correct1 = 0
-    total = 0
-    correct2 = 0
-    model1.eval()
-    model2.eval()
-    with torch.no_grad():
-        for data in testloader:
-            images, labels = data
-            outputs1 = model1(images)
-            outputs2 = model2(images)
-            total += labels.size(0)
-            #for retrained model
-            _,predicted1 = torch.max(outputs1.data,1)
-            correct1 += (predicted1 == labels).sum().item()
-
-            # for original model
-            with open("imagenet_classes.txt", "r") as f:
-                categories = [s.strip() for s in f.readlines()]
-            
-            probabilities = torch.nn.functional.softmax(outputs2[0], dim=0)
-            _,predict_id = torch.topk(probabilities,1)
-            prediction = categories[predict_id]
-
-            if prediction == classes[labels.item()]:
-                correct2 += 1
-
-    print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 // total} %')
-    print(f'Accuracy of the original network on {total} test images: {100 * correct2 // total} %')
 
 def test_single_model(model1, datadir, noisetype = 'SNP', writemode = False, filename = None):
     ds_mean, ds_std = Mean_and_std_of_dataset(datadir, 1)
@@ -186,6 +152,7 @@ def test_single_model(model1, datadir, noisetype = 'SNP', writemode = False, fil
         transforms.Resize((224,224)),
         transforms.ToTensor(),
         transforms.Normalize(ds_mean, ds_std)])
+
     testset = datasets.ImageFolder(datadir,transform=data_transforms)
     classes = testset.classes
     testloader = torch.utils.data.DataLoader(testset, batch_size=1, shuffle=True)
@@ -241,16 +208,19 @@ def test_single_model(model1, datadir, noisetype = 'SNP', writemode = False, fil
             print(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)')
             print(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)')
         else:                   # save in file
-            txtdir = "./Results/"+filename+'.txt'
+#            txtdir = "./Results/"+filename+'.txt'
+            rdir = datadir.replace('test','test_result')
+            txtdir = f'{rdir}/{filename}.txt'
+            
             print(f'The result is stored at {txtdir}\n')
-            F = open(txtdir,'a')
-            F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
-            F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
-            F.write(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)\n')
-            F.write(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)\n')
-            F.write(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)\n')
-            F.write(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)\n')
-            F.write('==========\n')
+            with open(txtdir, 'a') as F:
+                F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+                F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
+                F.write(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)\n')
+                F.write(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)\n')
+                F.write(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)\n')
+                F.write(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)\n')
+                F.write('==========\n')
             F.close
         # for analysis
         err_dist.append(correct1)        
@@ -368,33 +338,36 @@ def test_single_model(model1, datadir, noisetype = 'SNP', writemode = False, fil
             print(f'm_0.5_v_0.5: {m5v5_err} ({100*m5v5_err/total}%)')
             
         else:                   # save in file
-            txtdir = "./Results/"+filename+'.txt'
+#            txtdir = "./Results/"+filename+'.txt'
+            rdir = datadir.replace('test','test_result')
+            txtdir = f'{rdir}/{filename}.txt'
             print(f'The result is stored at {txtdir}\n')
-            F = open(txtdir,'a')
-            F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
-            F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
 
-            F.write(f'm_0.2_v_0.2: {m2v2_err} ({100*m2v2_err/total}%)\n')
-            F.write(f'm_0.2_v_0.3: {m2v3_err} ({100*m2v3_err/total}%)\n')
-            F.write(f'm_0.2_v_0.4: {m2v4_err} ({100*m2v4_err/total}%)\n')
-            F.write(f'm_0.2_v_0.5: {m2v5_err} ({100*m2v5_err/total}%)\n')
-            
-            F.write(f'm_0.3_v_0.2: {m3v2_err} ({100*m3v2_err/total}%)\n')
-            F.write(f'm_0.3_v_0.3: {m3v3_err} ({100*m3v3_err/total}%)\n')
-            F.write(f'm_0.3_v_0.4: {m3v4_err} ({100*m3v4_err/total}%)\n')
-            F.write(f'm_0.3_v_0.5: {m3v5_err} ({100*m3v5_err/total}%)\n')
-            
-            F.write(f'm_0.4_v_0.2: {m4v2_err} ({100*m4v2_err/total}%)\n')
-            F.write(f'm_0.4_v_0.3: {m4v3_err} ({100*m4v3_err/total}%)\n')
-            F.write(f'm_0.4_v_0.4: {m4v4_err} ({100*m4v4_err/total}%)\n')
-            F.write(f'm_0.4_v_0.5: {m4v5_err} ({100*m4v5_err/total}%)\n')
-            
-            F.write(f'm_0.5_v_0.2: {m5v2_err} ({100*m5v2_err/total}%)\n')
-            F.write(f'm_0.5_v_0.3: {m5v3_err} ({100*m5v3_err/total}%)\n')
-            F.write(f'm_0.5_v_0.4: {m5v4_err} ({100*m5v4_err/total}%)\n')
-            F.write(f'm_0.5_v_0.5: {m5v5_err} ({100*m5v5_err/total}%)\n')
+            with open(txtdir, 'a') as F:
+                F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+                F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
 
-            F.write('==========\n')
+                F.write(f'm_0.2_v_0.2: {m2v2_err} ({100*m2v2_err/total}%)\n')
+                F.write(f'm_0.2_v_0.3: {m2v3_err} ({100*m2v3_err/total}%)\n')
+                F.write(f'm_0.2_v_0.4: {m2v4_err} ({100*m2v4_err/total}%)\n')
+                F.write(f'm_0.2_v_0.5: {m2v5_err} ({100*m2v5_err/total}%)\n')
+
+                F.write(f'm_0.3_v_0.2: {m3v2_err} ({100*m3v2_err/total}%)\n')
+                F.write(f'm_0.3_v_0.3: {m3v3_err} ({100*m3v3_err/total}%)\n')
+                F.write(f'm_0.3_v_0.4: {m3v4_err} ({100*m3v4_err/total}%)\n')
+                F.write(f'm_0.3_v_0.5: {m3v5_err} ({100*m3v5_err/total}%)\n')
+
+                F.write(f'm_0.4_v_0.2: {m4v2_err} ({100*m4v2_err/total}%)\n')
+                F.write(f'm_0.4_v_0.3: {m4v3_err} ({100*m4v3_err/total}%)\n')
+                F.write(f'm_0.4_v_0.4: {m4v4_err} ({100*m4v4_err/total}%)\n')
+                F.write(f'm_0.4_v_0.5: {m4v5_err} ({100*m4v5_err/total}%)\n')
+
+                F.write(f'm_0.5_v_0.2: {m5v2_err} ({100*m5v2_err/total}%)\n')
+                F.write(f'm_0.5_v_0.3: {m5v3_err} ({100*m5v3_err/total}%)\n')
+                F.write(f'm_0.5_v_0.4: {m5v4_err} ({100*m5v4_err/total}%)\n')
+                F.write(f'm_0.5_v_0.5: {m5v5_err} ({100*m5v5_err/total}%)\n')
+
+                F.write('==========\n')
             F.close
 
         err_dist.append(correct1)        
@@ -444,9 +417,6 @@ def test_single_model(model1, datadir, noisetype = 'SNP', writemode = False, fil
         return err_dist, label_dic
         
         
-        
-
-
 
 def test_single_pretrained_model(model1, datadir, writemode = False , filename = None):
     data_transforms = transforms.Compose([
