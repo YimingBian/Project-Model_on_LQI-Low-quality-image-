@@ -30,9 +30,6 @@ def train_model(model, criterion, optimizer, scheduler, DATALOADER, DEVICE, DATA
         print('-' * 10)
         #f.write(f'Epoch {epoch}/{num_epochs - 1}\n')
         #f.write('----------\n')
-        
-        if epoch == 2:
-            return None
 
         for phase in ['train', 'val']:
             if phase == 'train':
