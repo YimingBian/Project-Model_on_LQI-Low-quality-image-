@@ -15,9 +15,17 @@ STORE_PATH = "./Results/Re-trained_models"
 
 #cudnn.benchmark = True
 
-
-# MODE: FE: feature extractor / FT: fine tunining
-def Train_model(DATADIR, MODEL_NAME, OUTDIM = 5, MODE = 'FE'):
+def Train_model(DATADIR, MODEL_NAME, NETWORK_NAME, OUTDIM = 5, MODE = 'FE'):
+    """
+    Usage of Train_model(DATADIR, MODEL_NAME, NETWORK_NAME, OUTDIM = 5, MODE = 'FE'):
+    *********************************************************************************
+    1. DATADIR: the folder that contains 'train' and 'val' image folders
+    2. MODEL_NAME: the name of the retrained model to be saved
+    3. NETWORK_NAME: a list of pretrained networks is here "https://pytorch.org/vision/stable/models.html"
+    4. OUTDIM: output dimension
+    5. Two options for MODE: 'FE'-deature extractor, only train the last layer while keep the previous layers frozen. 'FT'-fine tune, train the whole network
+    *********************************************************************************
+    """
     datadir = DATADIR
     train_dir = f'{datadir}/train'
     val_dir = f'{datadir}/val'
@@ -47,18 +55,25 @@ def Train_model(DATADIR, MODEL_NAME, OUTDIM = 5, MODE = 'FE'):
     dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
     class_names = image_datasets['train'].classes
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(f'Using device: {device}')
     if device == "cpu":
         print("GPU is not used. Exiting the training process.\n")
-        exit
+        return None
     #rebuild the model
-    model = models.resnet18(pretrained=True)
+    #model = models.resnet18(pretrained=True)
+    model = torch.hub.load('pytorch/vision:v0.10.0',NETWORK_NAME,pretrained = True)
 
     if MODE == 'FE': # feature extractor
         for param in model.parameters():
             param.requires_grad = False
     
-    num_ftrs = model.fc.in_features
-    model.fc = nn.Linear(num_ftrs, OUTDIM)
+    if NETWORK_NAME == 'resnet18':
+        num_ftrs = model.fc.in_features
+        model.fc = nn.Linear(num_ftrs, OUTDIM)
+    elif NETWORK_NAME == 'vgg16':
+        num_ftrs = model.classifier[6].in_features
+        model.classifier[6] = nn.Linear(num_ftrs, OUTDIM, bias=True)
+
     model = model.to(device)
 
     criterion = nn.CrossEntropyLoss()
@@ -66,12 +81,17 @@ def Train_model(DATADIR, MODEL_NAME, OUTDIM = 5, MODE = 'FE'):
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 
     SUBPATH = f'{STORE_PATH}/{MODEL_NAME}'
+    Checkpoint_model = f'{SUBPATH}/checkpoint_model.pth'
     if os.path.exists(SUBPATH) == False:
         os.makedirs(SUBPATH)
-    retrained_model = train_model(model, criterion, optimizer_ft, exp_lr_scheduler, dataloaders, device, dataset_sizes,SUBPATH, NUM_EPOCH )
+    retrained_model = train_model(model, criterion, optimizer_ft, exp_lr_scheduler, dataloaders, device, dataset_sizes, Checkpoint_model, NUM_EPOCH,SUBPATH )
 
     file1 = f'{SUBPATH}/{MODEL_NAME}.pth'
-    torch.save(retrained_model.state_dict(), file1)
+    if retrained_model == None:
+        print("Training process UNFINISHED. A checkpoint model is saved.")
+    else:
+        torch.save(retrained_model.state_dict(), file1)
+        print(f'The retrained model is saved at {file1}.')
 
     return retrained_model
 
@@ -84,6 +104,7 @@ def Train_model(DATADIR, MODEL_NAME, OUTDIM = 5, MODE = 'FE'):
 
 if __name__ == '__main__':
     print("this is called")
-    datadir = './data/GS'
-    modelname = 'vgg_model_May_11'
-    Train_model(datadir,modelname)
+    datadir = './data/SNP_SNP_0.1'
+    modelname = 'vgg_model_May_12'
+    networkname = 'vgg16'
+    Train_model(datadir,modelname, networkname)
