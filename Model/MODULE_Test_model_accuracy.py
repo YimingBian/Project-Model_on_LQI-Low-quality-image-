@@ -1,10 +1,14 @@
 import numpy as np
 import torch.nn as nn
 import torch
-from MODULE_TNT import test_single_model, test_single_pretrained_model
+from MODULE_TNT import test_model, test_single_pretrained_model
 from MODULE_Pie_graph import Draw_pie_graphs
 
 def Modify_last_fc_layer(NETOWKRNAME, ODIM):
+    """
+    This function modifies the last fc layer to the specified ODIM(Output dimension)
+    ODIM: output dimension
+    """
     model_tmp = torch.hub.load('pytorch/vision:v0.10.0',NETOWKRNAME,pretrained = True)
     for params in model_tmp.parameters():
         params.requires_grad = False
@@ -13,6 +17,16 @@ def Modify_last_fc_layer(NETOWKRNAME, ODIM):
     return model_tmp
 
 def Test_accuracy_retrained_models(MODELPATHs, MODELNAMEs, NETWORKNAME, ODIM, NOISETYPE, TESTSETPATHs, PIE = False, WRITE = False):
+    """
+    1. MODELPATHs: a list of paths of models(.pth)
+    2. MODELNAMEs: a list of model names(string). e.g. MODELNAME = ["mix model", "SNP model"]
+    3. NETWORKNAME: a list of pretrained networks is here "https://pytorch.org/vision/stable/models.html"
+    4. ODIM:output dimensions
+    5. NOISETYPE: Currently two options: 'SNP' and 'GS'. More to be added
+    6. TESTSETPATHs: a list of paths of testing sets. e.g. TESTDIRS = ["D:/test_ori", "D:/test"] 
+    7. PIE = False
+    8. WRITE = False 
+    """
     for testsetpath in TESTSETPATHs:
         err_distribution = list()
         for i in range(len(MODELPATHs)):
@@ -20,7 +34,7 @@ def Test_accuracy_retrained_models(MODELPATHs, MODELNAMEs, NETWORKNAME, ODIM, NO
             model = Modify_last_fc_layer(NETWORKNAME, ODIM)
             model.load_state_dict(torch.load(MODELPATHs[i]))
             print("starting passing test set ...\n")
-            err, lab = test_single_model(model1=model, datadir=testsetpath, noisetype = NOISETYPE, writemode = WRITE, filename = modelname)
+            err, lab = test_model(model1=model, datadir=testsetpath, noisetype = NOISETYPE, writemode = WRITE, filename = modelname)
             err_distribution.append(err)
         if PIE:
             num_parts = len(lab)

@@ -19,8 +19,9 @@ STORE_PATH = "./Results/Re-trained_models"
 # MODE: FE: feature extractor / FT: fine tunining
 def Train_model(DATADIR, MODEL_NAME, OUTDIM = 5, MODE = 'FE'):
     datadir = DATADIR
-    train_dir = os.path.join(datadir,'/','train')
-    val_dir = os.path.join(datadir,'/','val')
+    train_dir = f'{datadir}/train'
+    val_dir = f'{datadir}/val'
+    
     train_mean, train_var = Mean_and_std_of_dataset(train_dir,BATCH_SIZE)
     val_mean, val_var = Mean_and_std_of_dataset(val_dir,BATCH_SIZE)
     
@@ -64,10 +65,12 @@ def Train_model(DATADIR, MODEL_NAME, OUTDIM = 5, MODE = 'FE'):
     optimizer_ft = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 
-    SUBPATH = f'{STORE_PATH/{MODEL_NAME}}'
-    retrained_model = train_model(model, criterion, optimizer_ft, exp_lr_scheduler, dataloaders, device, dataset_sizes, NUM_EPOCH, SUBPATH)
+    SUBPATH = f'{STORE_PATH}/{MODEL_NAME}'
+    if os.path.exists(SUBPATH) == False:
+        os.makedirs(SUBPATH)
+    retrained_model = train_model(model, criterion, optimizer_ft, exp_lr_scheduler, dataloaders, device, dataset_sizes,SUBPATH, NUM_EPOCH )
 
-    file1 = f'{SUBPATH}/{MODEL_NAME}/.pth'
+    file1 = f'{SUBPATH}/{MODEL_NAME}.pth'
     torch.save(retrained_model.state_dict(), file1)
 
     return retrained_model
@@ -79,3 +82,8 @@ def Train_model(DATADIR, MODEL_NAME, OUTDIM = 5, MODE = 'FE'):
 #ssl._create_default_https_context = ssl._create_unverified_context
 
 
+if __name__ == '__main__':
+    print("this is called")
+    datadir = './data/GS'
+    modelname = 'vgg_model_May_11'
+    Train_model(datadir,modelname)

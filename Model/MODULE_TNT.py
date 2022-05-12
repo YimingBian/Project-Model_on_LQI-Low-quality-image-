@@ -6,22 +6,21 @@ import torch
 from torchvision import datasets, transforms
 from MODULE_MEAN_STD import Mean_and_std_of_dataset
 
-def imshow(inp, title=None):
-    """Imshow for Tensor."""
-    inp = inp.numpy().transpose((1, 2, 0))
-    mean = np.array([0.485, 0.456, 0.406])
-    std = np.array([0.229, 0.224, 0.225])
-    inp = std * inp + mean
-    inp = np.clip(inp, 0, 1)
-    plt.imshow(inp)
-    if title is not None:
-        plt.title(title)
-    plt.pause(0.001)  # pause a bit so that plots are updated
-    plt.show()
 
-
-def train_model(model, criterion, optimizer, scheduler, DATALOADER, DEVICE, DATASETSIZE, store_path, num_epochs=25):
-    f = open(f'{store_path}/Training_Epoch.txt')
+def train_model(model, criterion, optimizer, scheduler, DATALOADER, DEVICE, DATASETSIZE, num_epochs=25, store_path = None):
+    """
+    This function trains the model. Input parameters are:
+    1. model: pre-trained model, or a model with random initialization 
+    2. criterion: loss function, e.g. "nn.CrossEntropyLoss()"
+    3. optimizer: optimizer, e.g. "optim.SGD(model.parameters(), lr=0.001, momentum=0.9)"
+    4. scheduler: slowly decrease the learning rate, e.g. "lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)"
+    5. DATALOADER: as suggested by name
+    6. DEVIDE: as suggested by name
+    7. DATASETSIZE: total number of images, not the individual category
+    8. num_epochs: # of training epochs, 25 by default
+    9. store_path: not needed for Nova
+    """
+    #f = open(f'{store_path}/Training_Epoch.txt', 'w')
     since = time.time()
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
@@ -29,8 +28,8 @@ def train_model(model, criterion, optimizer, scheduler, DATALOADER, DEVICE, DATA
     for epoch in range(num_epochs):
         print(f'Epoch {epoch}/{num_epochs - 1}')
         print('-' * 10)
-        f.write(f'Epoch {epoch}/{num_epochs - 1}\n')
-        f.write('----------\n')
+        #f.write(f'Epoch {epoch}/{num_epochs - 1}\n')
+        #f.write('----------\n')
         
         for phase in ['train', 'val']:
             if phase == 'train':
@@ -70,7 +69,7 @@ def train_model(model, criterion, optimizer, scheduler, DATALOADER, DEVICE, DATA
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
             print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
-            f.write(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}\n')
+            #f.write(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}\n')
             
 
             # deep copy the model
@@ -81,72 +80,24 @@ def train_model(model, criterion, optimizer, scheduler, DATALOADER, DEVICE, DATA
     time_elapsed = time.time() - since
     print(f'Training complete in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s')
     print(f'Best val Acc: {best_acc:4f}')
-    f.write(f'Training complete in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s\n')
-    f.write(f'Best val Acc: {best_acc:4f}\n')
+    #f.write(f'Training complete in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s\n')
+    #f.write(f'Best val Acc: {best_acc:4f}\n')
     
 
     # load best model weights
     model.load_state_dict(best_model_wts)
     return model
 
-def visualize_model(model, DATALOADER, DEVICE, CLASSNAMES, num_images=6):
-    was_training = model.training
-    model.eval()
-    images_so_far = 0
-    fig = plt.figure()
-
-    dataloaders = DATALOADER
-    device = DEVICE
-    class_names = CLASSNAMES
-
-    with torch.no_grad():
-        for i, (inputs, labels) in enumerate(dataloaders['val']):
-            inputs = inputs.to(device)
-            labels = labels.to(device)
-
-            outputs = model(inputs)
-            _, preds = torch.max(outputs, 1)
-
-            for j in range(inputs.size()[0]):
-                images_so_far += 1
-                ax = plt.subplot(num_images//2, 2, images_so_far)
-                ax.axis('off')
-                ax.set_title(f'predicted: {class_names[preds[j]]}')
-                imshow(inputs.cpu().data[j])
-
-                if images_so_far == num_images:
-                    model.train(mode=was_training)
-                    return
-        model.train(mode=was_training)
-
-def test_model(model, datadir, batchsize):
-    data_transforms = transforms.Compose([
-        transforms.Resize((224,224)),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
-    testset = datasets.ImageFolder(datadir,transform=data_transforms)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=batchsize, shuffle=False)
-
-    correct = 0
-    total = 0
-    count = 0
-    with torch.no_grad():
-        for data in testloader:
-            count += 1
-            images, labels = data
-            #print(labels)
-            outputs = model(images)
-            print(outputs)
-            _,predicted = torch.max(outputs.data,1)
-            #print(predicted)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
-            
-
-    print(f'Accuracy of the network on {total} test images: {100 * correct // total} %')
-
-
-def test_single_model(model1, datadir, noisetype = 'SNP', writemode = False, filename = None):
+def test_model(model1, datadir, noisetype = 'SNP', writemode = False, filename = None):
+    """
+    This function test the accuracy of the model.
+    Parameters:
+    1. model1: model to be tested
+    2. datadir: the path of the folder that contains the images. e.g. ".../test"
+    3. noisetype: 'SNP' by default
+    4. writemode: 'False' by default. It specifies whether to store the results in a txt file. For Nova, it is False.
+    5. filename: 'None' by default. If writemode is True, it needs to be specified. It is the name of the text file without extension.   
+    """
     ds_mean, ds_std = Mean_and_std_of_dataset(datadir, 1)
     data_transforms = transforms.Compose([
         transforms.Resize((224,224)),
@@ -415,8 +366,77 @@ def test_single_model(model1, datadir, noisetype = 'SNP', writemode = False, fil
         label_dic.append("m5v5_err")
 
         return err_dist, label_dic
-        
-        
+ 
+
+
+def imshow(inp, title=None):
+    """Imshow for Tensor."""
+    inp = inp.numpy().transpose((1, 2, 0))
+    mean = np.array([0.485, 0.456, 0.406])
+    std = np.array([0.229, 0.224, 0.225])
+    inp = std * inp + mean
+    inp = np.clip(inp, 0, 1)
+    plt.imshow(inp)
+    if title is not None:
+        plt.title(title)
+    plt.pause(0.001)  # pause a bit so that plots are updated
+    plt.show()
+
+def visualize_model(model, DATALOADER, DEVICE, CLASSNAMES, num_images=6):
+    was_training = model.training
+    model.eval()
+    images_so_far = 0
+    fig = plt.figure()
+
+    dataloaders = DATALOADER
+    device = DEVICE
+    class_names = CLASSNAMES
+
+    with torch.no_grad():
+        for i, (inputs, labels) in enumerate(dataloaders['val']):
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
+
+            for j in range(inputs.size()[0]):
+                images_so_far += 1
+                ax = plt.subplot(num_images//2, 2, images_so_far)
+                ax.axis('off')
+                ax.set_title(f'predicted: {class_names[preds[j]]}')
+                imshow(inputs.cpu().data[j])
+
+                if images_so_far == num_images:
+                    model.train(mode=was_training)
+                    return
+        model.train(mode=was_training)
+
+def test_model_USELESS(model, datadir, batchsize):
+    data_transforms = transforms.Compose([
+        transforms.Resize((224,224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+    testset = datasets.ImageFolder(datadir,transform=data_transforms)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=batchsize, shuffle=False)
+
+    correct = 0
+    total = 0
+    count = 0
+    with torch.no_grad():
+        for data in testloader:
+            count += 1
+            images, labels = data
+            #print(labels)
+            outputs = model(images)
+            print(outputs)
+            _,predicted = torch.max(outputs.data,1)
+            #print(predicted)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+            
+
+    print(f'Accuracy of the network on {total} test images: {100 * correct // total} %')
 
 def test_single_pretrained_model(model1, datadir, writemode = False , filename = None):
     data_transforms = transforms.Compose([

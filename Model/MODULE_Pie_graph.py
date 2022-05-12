@@ -20,6 +20,7 @@ def Draw_pie_graphs(DATA, LABELS, TITLES, EXPLODES, START_ANGLE, LEGENDS, N_ROW 
         plt.show()
     else:
         resultdir = os.path.join(DIR,FILENAME)
+        print(f'Pie graph saved to {resultdir}.\n')
         plt.savefig(resultdir,bbox_inches='tight')
 
 
