@@ -1,0 +1,259 @@
+
+The following have been reloaded with a version change:
+  1) gettext/0.20.2-dpkfgaz => gettext/0.20.2-k4lauwg
+  2) libxml2/2.9.8-ffzbok4 => libxml2/2.9.10-i7eqked
+  3) python/3.7.7-dwjowwi => python/3.7.7-b5s6jni
+  4) xz/5.2.4-rh7gav6 => xz/5.2.5-4wylwql
+
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Test set: Original
+
+Model: RtO model
+
+Accuracy of the retrained network on 650 test images: 99.53846153846153 %
+==========
+Test set: Original
+
+Model: VGG_SNP_0.1
+
+Accuracy of the retrained network on 650 test images: 99.38461538461539 %
+==========
+Test set: Original
+
+Model: VGG_SNP_0.2
+
+Accuracy of the retrained network on 650 test images: 98.92307692307692 %
+==========
+Test set: Original
+
+Model: VGG_SNP_0.3
+
+Accuracy of the retrained network on 650 test images: 99.07692307692308 %
+==========
+Test set: Original
+
+Model: VGG_SNP_0.4
+
+Accuracy of the retrained network on 650 test images: 97.38461538461539 %
+==========
+Test set: Original
+
+Model: VGG_SNP_0.5
+
+Accuracy of the retrained network on 650 test images: 80.0 %
+==========
+Test set: SNP_0.5
+
+Model: RtO model
+
+Accuracy of the retrained network on 650 test images: 52.76923076923077 %
+==========
+Test set: SNP_0.5
+
+Model: VGG_SNP_0.1
+
+Accuracy of the retrained network on 650 test images: 62.46153846153846 %
+==========
+Test set: SNP_0.5
+
+Model: VGG_SNP_0.2
+
+Accuracy of the retrained network on 650 test images: 70.3076923076923 %
+==========
+Test set: SNP_0.5
+
+Model: VGG_SNP_0.3
+
+Accuracy of the retrained network on 650 test images: 74.61538461538461 %
+==========
+Test set: SNP_0.5
+
+Model: VGG_SNP_0.4
+
+Accuracy of the retrained network on 650 test images: 78.15384615384616 %
+==========
+Test set: SNP_0.5
+
+Model: VGG_SNP_0.5
+
+Accuracy of the retrained network on 650 test images: 75.53846153846153 %
+==========
+Test set: SNP_0.4
+
+Model: RtO model
+
+Accuracy of the retrained network on 650 test images: 63.53846153846154 %
+==========
+Test set: SNP_0.4
+
+Model: VGG_SNP_0.1
+
+Accuracy of the retrained network on 650 test images: 75.84615384615384 %
+==========
+Test set: SNP_0.4
+
+Model: VGG_SNP_0.2
+
+Accuracy of the retrained network on 650 test images: 81.38461538461539 %
+==========
+Test set: SNP_0.4
+
+Model: VGG_SNP_0.3
+
+Accuracy of the retrained network on 650 test images: 83.07692307692308 %
+==========
+Test set: SNP_0.4
+
+Model: VGG_SNP_0.4
+
+Accuracy of the retrained network on 650 test images: 82.46153846153847 %
+==========
+Test set: SNP_0.4
+
+Model: VGG_SNP_0.5
+
+Accuracy of the retrained network on 650 test images: 79.38461538461539 %
+==========
+Test set: SNP_0.3
+
+Model: RtO model
+
+Accuracy of the retrained network on 650 test images: 76.92307692307692 %
+==========
+Test set: SNP_0.3
+
+Model: VGG_SNP_0.1
+
+Accuracy of the retrained network on 650 test images: 88.0 %
+==========
+Test set: SNP_0.3
+
+Model: VGG_SNP_0.2
+
+Accuracy of the retrained network on 650 test images: 90.76923076923077 %
+==========
+Test set: SNP_0.3
+
+Model: VGG_SNP_0.3
+
+Accuracy of the retrained network on 650 test images: 91.07692307692308 %
+==========
+Test set: SNP_0.3
+
+Model: VGG_SNP_0.4
+
+Accuracy of the retrained network on 650 test images: 89.84615384615384 %
+==========
+Test set: SNP_0.3
+
+Model: VGG_SNP_0.5
+
+Accuracy of the retrained network on 650 test images: 86.61538461538461 %
+==========
+Test set: SNP_0.2
+
+Model: RtO model
+
+Accuracy of the retrained network on 650 test images: 91.23076923076923 %
+==========
+Test set: SNP_0.2
+
+Model: VGG_SNP_0.1
+
+Accuracy of the retrained network on 650 test images: 96.0 %
+==========
+Test set: SNP_0.2
+
+Model: VGG_SNP_0.2
+
+Accuracy of the retrained network on 650 test images: 95.6923076923077 %
+==========
+Test set: SNP_0.2
+
+Model: VGG_SNP_0.3
+
+Accuracy of the retrained network on 650 test images: 95.23076923076923 %
+==========
+Test set: SNP_0.2
+
+Model: VGG_SNP_0.4
+
+Accuracy of the retrained network on 650 test images: 91.6923076923077 %
+==========
+Test set: SNP_0.2
+
+Model: VGG_SNP_0.5
+
+Accuracy of the retrained network on 650 test images: 87.38461538461539 %
+==========
+Test set: SNP_0.1
+
+Model: RtO model
+
+Accuracy of the retrained network on 650 test images: 96.0 %
+==========
+Test set: SNP_0.1
+
+Model: VGG_SNP_0.1
+
+Accuracy of the retrained network on 650 test images: 98.46153846153847 %
+==========
+Test set: SNP_0.1
+
+Model: VGG_SNP_0.2
+
+Accuracy of the retrained network on 650 test images: 98.15384615384616 %
+==========
+Test set: SNP_0.1
+
+Model: VGG_SNP_0.3
+
+Accuracy of the retrained network on 650 test images: 97.53846153846153 %
+==========
+Test set: SNP_0.1
+
+Model: VGG_SNP_0.4
+
+Accuracy of the retrained network on 650 test images: 95.07692307692308 %
+==========
+Test set: SNP_0.1
+
+Model: VGG_SNP_0.5
+
+Accuracy of the retrained network on 650 test images: 87.6923076923077 %
+==========

@@ -1,0 +1,62 @@
+Test set: Original
+
+Model: RtO model
+
+Accuracy of the retrained network on 650 test images: 99.53846153846153 %
+==========
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Test set: Original
+
+Model: RtN_SNP
+
+Accuracy of the retrained network on 650 test images: 99.53846153846153 %
+==========
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Test set: Original
+
+Model: RtN_SPE
+
+Accuracy of the retrained network on 650 test images: 99.23076923076923 %
+==========
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Test set: SNP_whole
+
+Model: RtO model
+
+Accuracy of the retrained network on 3250 test images: 76.0 %
+==========
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Test set: SNP_whole
+
+Model: RtN_SNP
+
+Accuracy of the retrained network on 3250 test images: 90.06153846153846 %
+==========
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Test set: SNP_whole
+
+Model: RtN_SPE
+
+Accuracy of the retrained network on 3250 test images: 85.07692307692308 %
+==========
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Test set: SPE_whole
+
+Model: RtO model
+
+Accuracy of the retrained network on 2600 test images: 67.23076923076923 %
+==========
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0S
+Test set: SPE_whole
+
+Model: RtN_SNP
+
+Accuracy of the retrained network on 2600 test images: 79.34615384615384 %
+==========
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Test set: SPE_whole
+
+Model: RtN_SPE
+
+Accuracy of the retrained network on 2600 test images: 83.15384615384616 %
+==========
