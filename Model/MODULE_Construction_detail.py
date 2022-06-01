@@ -19,6 +19,9 @@ def getListOfFiles(dirName):
                 
     return allFiles    
 
+def get_only_file_name(dirName):
+    list_files = os.listdir(dirName)
+    return list_files
 
 def Get_dataset_construction(directory, keys, keywords, pct = False):
     allFiles = getListOfFiles(directory)
@@ -39,14 +42,14 @@ def Get_dataset_construction(directory, keys, keywords, pct = False):
     else:
         return construction
 
+if __name__ == "__main__":
+    # an example
+    keys = ["pythonfiles", "matlabfiles"]
+    keywords = ['.py', '.m']
+    DIR = './'
 
-# an example
-keys = ["pythonfiles", "matlabfiles"]
-keywords = ['.py', '.m']
-DIR = './'
+    A,B = Get_dataset_construction(DIR,keys,keywords,True)
+    #A = Get_dataset_construction(DIR,keys,keywords)
 
-A,B = Get_dataset_construction(DIR,keys,keywords,True)
-#A = Get_dataset_construction(DIR,keys,keywords)
-
-print(A)
-print(B)
+    print(A)
+    print(B)
