@@ -372,70 +372,34 @@ def test_model(model1, datadir, noisetype = 'SNP', detailmode = False, writemode
             label_dic.append("m5v5_err")
 
     else: # on single noise testing sets
-        if noisetype == 'SNP':
-            # noise type is set default as salt and pepper
-            with torch.no_grad():
-                for data in testloader:
-                    images, labels = data
-                    total += labels.size(0)
-                    images = images.to('cuda')
-                    outputs1 = model1(images)
-                    #for retrained model
-                    _,predicted1 = torch.max(outputs1.data,1)
+        with torch.no_grad():
+            for data in testloader:
+                images, labels = data
+                total += labels.size(0)
+                images = images.to('cuda')
+                outputs1 = model1(images)
+                #for retrained model
+                _,predicted1 = torch.max(outputs1.data,1)
+                predicted1 = predicted1.to('cpu')
+                correct1 += (predicted1 == labels).sum().item()
+        if writemode == False:  # print on screen
+            print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
+        else:                   # save in file
+#               txtdir = "./Results/"+filename+'.txt'
+            rdir = datadir.replace('test','test_result')
+            txtdir = f'{rdir}/{filename}.txt'
+            print(f'The testing result of {model1} is stored at {txtdir}\n')
+            with open(txtdir, 'a') as F:
+                F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
+                F.write('==========\n')
+            F.close
+        # for analysis
+    err_dist.append(correct1)        
+    err_dist.append(total-correct1)        
+    label_dic.append("Correct")
+    label_dic.append("error")
+    return err_dist, label_dic
 
-                    predicted1 = predicted1.to('cpu')
-
-                    correct1 += (predicted1 == labels).sum().item()
-
-            if writemode == False:  # print on screen
-                print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
-            else:                   # save in file
-#                txtdir = "./Results/"+filename+'.txt'
-                rdir = datadir.replace('test','test_result')
-                txtdir = f'{rdir}/{filename}.txt'
-                print(f'The testing result of {model1} is stored at {txtdir}\n')
-                with open(txtdir, 'a') as F:
-                    F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
-                    F.write('==========\n')
-                F.close
-            # for analysis
-            err_dist.append(correct1)        
-            err_dist.append(total-correct1)        
-            label_dic.append("Correct")
-            label_dic.append("error")
-            return err_dist, label_dic
-
-        elif noisetype == 'GS':
-            with torch.no_grad():
-                for data in testloader:
-                    images, labels = data
-                    total += labels.size(0)
-                    images = images.to('cuda')
-                    outputs1 = model1(images)
-                    #for retrained model
-                    _,predicted1 = torch.max(outputs1.data,1)
-                    predicted1=predicted1.to('cpu')
-                    correct1 += (predicted1 == labels).sum().item()
-
-            if writemode == False:  # print on screen
-                print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
-            else:                   # save in file
-#                txtdir = "./Results/"+filename+'.txt'
-                rdir = datadir.replace('test','test_result')
-                txtdir = f'{rdir}/{filename}.txt'
-                print(f'The result is stored at {txtdir}\n')
-
-                with open(txtdir, 'a') as F:
-                    F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
-                    F.write('==========\n')
-                F.close
-
-            err_dist.append(correct1)        
-            err_dist.append(total-correct1)    
-            label_dic.append("Correct")
-            label_dic.append("error")
-
-        return err_dist, label_dic
  
 
 

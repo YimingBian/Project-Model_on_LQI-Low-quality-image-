@@ -1,0 +1,145 @@
+
+The following have been reloaded with a version change:
+  1) gettext/0.20.2-k4lauwg => gettext/0.20.2-dpkfgaz
+  2) libxml2/2.9.10-i7eqked => libxml2/2.9.8-ffzbok4
+  3) python/3.7.7-b5s6jni => python/3.7.7-dwjowwi
+  4) xz/5.2.5-4wylwql => xz/5.2.4-rh7gav6
+
+
+The following have been reloaded with a version change:
+  1) gettext/0.20.2-dpkfgaz => gettext/0.20.2-k4lauwg
+  2) libxml2/2.9.8-ffzbok4 => libxml2/2.9.10-i7eqked
+  3) python/3.7.7-dwjowwi => python/3.7.7-b5s6jni
+  4) xz/5.2.4-rh7gav6 => xz/5.2.5-4wylwql
+
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Dataset: ./Testing_data/Original/test
+
+Accuracy on 650 test images: 79.07692307692308 %
+
+**********
+Dataset: ./Testing_data/SNP/SNP_0.1/test
+
+Accuracy on 650 test images: 58.46153846153846 %
+
+**********
+Dataset: ./Testing_data/SNP/SNP_0.2/test
+
+Accuracy on 650 test images: 36.61538461538461 %
+
+**********
+Dataset: ./Testing_data/SNP/SNP_0.3/test
+
+Accuracy on 650 test images: 21.384615384615383 %
+
+**********
+Dataset: ./Testing_data/SNP/SNP_0.4/test
+
+Accuracy on 650 test images: 9.538461538461538 %
+
+**********
+Dataset: ./Testing_data/SNP/SNP_0.5/test
+
+Accuracy on 650 test images: 6.3076923076923075 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.1/ksize_3/test
+
+Accuracy on 650 test images: 72.0 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.1/ksize_5/test
+
+Accuracy on 650 test images: 69.23076923076923 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.1/ksize_7/test
+
+Accuracy on 650 test images: 68.3076923076923 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.1/ksize_9/test
+
+Accuracy on 650 test images: 66.46153846153847 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.2/ksize_3/test
+
+Accuracy on 650 test images: 56.46153846153846 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.2/ksize_5/test
+
+Accuracy on 650 test images: 56.76923076923077 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.2/ksize_7/test
+
+Accuracy on 650 test images: 56.76923076923077 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.2/ksize_9/test
+
+Accuracy on 650 test images: 55.69230769230769 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.3/ksize_3/test
+
+Accuracy on 650 test images: 38.15384615384615 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.3/ksize_5/test
+
+Accuracy on 650 test images: 44.61538461538461 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.3/ksize_7/test
+
+Accuracy on 650 test images: 45.23076923076923 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.3/ksize_9/test
+
+Accuracy on 650 test images: 46.76923076923077 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.4/ksize_3/test
+
+Accuracy on 650 test images: 17.384615384615383 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.4/ksize_5/test
+
+Accuracy on 650 test images: 24.153846153846153 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.4/ksize_7/test
+
+Accuracy on 650 test images: 27.53846153846154 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.4/ksize_9/test
+
+Accuracy on 650 test images: 29.384615384615383 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.5/ksize_3/test
+
+Accuracy on 650 test images: 9.076923076923077 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.5/ksize_5/test
+
+Accuracy on 650 test images: 10.615384615384615 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.5/ksize_7/test
+
+Accuracy on 650 test images: 12.307692307692308 %
+
+**********
+Dataset: ./Testing_data/MF_SNP/SNP_0.5/ksize_9/test
+
+Accuracy on 650 test images: 12.615384615384615 %
+
+**********

@@ -1,0 +1,196 @@
+
+The following have been reloaded with a version change:
+  1) gettext/0.20.2-k4lauwg => gettext/0.20.2-dpkfgaz
+  2) libxml2/2.9.10-i7eqked => libxml2/2.9.8-ffzbok4
+  3) python/3.7.7-b5s6jni => python/3.7.7-dwjowwi
+  4) xz/5.2.5-4wylwql => xz/5.2.4-rh7gav6
+
+
+The following have been reloaded with a version change:
+  1) gettext/0.20.2-dpkfgaz => gettext/0.20.2-k4lauwg
+  2) libxml2/2.9.8-ffzbok4 => libxml2/2.9.10-i7eqked
+  3) python/3.7.7-dwjowwi => python/3.7.7-b5s6jni
+  4) xz/5.2.4-rh7gav6 => xz/5.2.5-4wylwql
+
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Using cache found in /home/ybian/.cache/torch/hub/pytorch_vision_v0.10.0
+Test set: Original
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 98.61538461538461 %
+==========
+Test set: SNP_0.1
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 96.0 %
+==========
+Test set: SNP_0.2
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 91.07692307692308 %
+==========
+Test set: SNP_0.3
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 80.92307692307692 %
+==========
+Test set: SNP_0.4
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 67.84615384615384 %
+==========
+Test set: SNP_0.5
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 56.76923076923077 %
+==========
+Test set: ksize_3
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 99.07692307692308 %
+==========
+Test set: ksize_5
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 98.46153846153847 %
+==========
+Test set: ksize_7
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 97.53846153846153 %
+==========
+Test set: ksize_9
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 96.3076923076923 %
+==========
+Test set: ksize_3
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 95.38461538461539 %
+==========
+Test set: ksize_5
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 95.23076923076923 %
+==========
+Test set: ksize_7
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 95.07692307692308 %
+==========
+Test set: ksize_9
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 94.61538461538461 %
+==========
+Test set: ksize_3
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 88.0 %
+==========
+Test set: ksize_5
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 91.07692307692308 %
+==========
+Test set: ksize_7
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 91.6923076923077 %
+==========
+Test set: ksize_9
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 91.07692307692308 %
+==========
+Test set: ksize_3
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 80.0 %
+==========
+Test set: ksize_5
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 80.61538461538461 %
+==========
+Test set: ksize_7
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 82.46153846153847 %
+==========
+Test set: ksize_9
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 83.53846153846153 %
+==========
+Test set: ksize_3
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 61.53846153846154 %
+==========
+Test set: ksize_5
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 69.38461538461539 %
+==========
+Test set: ksize_7
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 74.15384615384616 %
+==========
+Test set: ksize_9
+
+Model: MF_Res_RtO
+
+Accuracy of the retrained network on 650 test images: 78.15384615384616 %
+==========
