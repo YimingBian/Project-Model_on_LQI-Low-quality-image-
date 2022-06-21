@@ -383,7 +383,14 @@ def test_model(model1, datadir, noisetype = 'SNP', detailmode = False, writemode
                 predicted1 = predicted1.to('cpu')
                 correct1 += (predicted1 == labels).sum().item()
         if writemode == False:  # print on screen
-            print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
+            acc = round(100 * correct1 / total, 2)
+            print(f'Accuracy of the retrained network on {total} test images: {acc} %')
+            result_dir = f'./Results/Re-trained_models/{filename}/{filename}.txt'
+            with open(result_dir, 'a') as F:
+                F.write(f'{acc}\n')
+            F.close
+
+
         else:                   # save in file
 #               txtdir = "./Results/"+filename+'.txt'
             rdir = datadir.replace('test','test_result')
@@ -473,10 +480,11 @@ def test_model_USELESS(model, datadir, batchsize):
     print(f'Accuracy of the network on {total} test images: {100 * correct // total} %')
 
 def test_single_pretrained_model(model1, datadir, writemode = False , filename = None):
+    ds_mean, ds_std = Mean_and_std_of_dataset(datadir, 1)
     data_transforms = transforms.Compose([
         transforms.Resize((224,224)),
         transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+        transforms.Normalize(ds_mean, ds_std)])
     testset = datasets.ImageFolder(datadir,transform=data_transforms)
     classes = testset.classes
     testloader = torch.utils.data.DataLoader(testset, batch_size=1, shuffle=True)
@@ -485,12 +493,6 @@ def test_single_pretrained_model(model1, datadir, writemode = False , filename =
     model1.eval()
 
     model1=model1.to('cuda')
-    
-    count = 0
-    lvl_1_err = 0
-    lvl_2_err = 0
-    lvl_3_err = 0
-    lvl_4_err = 0
     
     with torch.no_grad():
         for data in testloader:
@@ -510,30 +512,17 @@ def test_single_pretrained_model(model1, datadir, writemode = False , filename =
             predict_id=predict_id.to('cpu')
             
             prediction = categories[predict_id]
+            
 
             if prediction == classes[labels.item()]:
                 correct1 += 1
-            else:
-                wrong_filename = str(testloader.dataset.imgs[count][0]).split('\\')[-1]
-                if '_SNP_0.4.JPEG' in wrong_filename:
-                    lvl_4_err += 1
-                elif '_SNP_0.3.JPEG' in wrong_filename:
-                    lvl_3_err += 1
-                elif '_SNP_0.2.JPEG' in wrong_filename:
-                    lvl_2_err += 1
-                elif '_SNP_0.1.JPEG' in wrong_filename:
-                    lvl_1_err += 1
-                else:
-                    ori_err += 1
-            count += 1
+
 
     if writemode == False:
-        print(f'Accuracy of the retrained network on {total} test images: {100 * correct1 / total} %')
-        print(f'original: {ori_err} ({100*ori_err/total}%)')
-        print(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)')
-        print(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)')
-        print(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)')
-        print(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)')
+        print(f'Dataset: {datadir}\n')
+        print(f'Accuracy on {total} test images: {100 * correct1 / total} %\n')
+        print('*'*10)
+
     #elif 'ori' in datadir or 'ORI' in datadir:
     #    txtdir = "./Results/"+filename+'.txt'
     #    F = open(txtdir,'a')
@@ -544,10 +533,8 @@ def test_single_pretrained_model(model1, datadir, writemode = False , filename =
         txtdir = "./Results/"+filename+'.txt'
         F = open(txtdir,'a')
         F.write(f'\nAccuracy of the retrained network on {total} test images: {100 * correct1 / total} %\n')
-        F.write(f'original: {ori_err} ({100*ori_err/total}%)\n')
-        F.write(f'lvl1: {lvl_1_err} ({100*lvl_1_err/total}%)\n')
-        F.write(f'lvl2: {lvl_2_err} ({100*lvl_2_err/total}%)\n')
-        F.write(f'lvl3: {lvl_3_err} ({100*lvl_3_err/total}%)\n')
-        F.write(f'lvl4: {lvl_4_err} ({100*lvl_4_err/total}%)\n')
         F.write('==========\n')
         F.close
+
+if __name__ == "__main__":
+    pass
